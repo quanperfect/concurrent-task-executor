@@ -1,0 +1,21 @@
+#pragma once
+
+#include <cstddef> // Load the standard library's identification macros first.
+
+#define CTE_STRINGIFY_IMPL(x) #x
+#define CTE_STRINGIFY(x) CTE_STRINGIFY_IMPL(x)
+namespace cte::bench::build {
+inline constexpr char version[] = "@PROJECT_VERSION@";
+inline constexpr char compiler[] = "@CMAKE_CXX_COMPILER_ID@-@CMAKE_CXX_COMPILER_VERSION@";
+inline constexpr char profile[] = "@CMAKE_BUILD_TYPE@";
+inline constexpr char sanitizer[] = "@CTE_SANITIZER@";
+#if defined(_LIBCPP_VERSION)
+inline constexpr char stdlib[] = "libc++-" CTE_STRINGIFY(_LIBCPP_VERSION);
+#elif defined(__GLIBCXX__)
+inline constexpr char stdlib[] = "libstdc++-" CTE_STRINGIFY(__GLIBCXX__);
+#else
+inline constexpr char stdlib[] = "unknown";
+#endif
+} // namespace cte::bench::build
+#undef CTE_STRINGIFY
+#undef CTE_STRINGIFY_IMPL

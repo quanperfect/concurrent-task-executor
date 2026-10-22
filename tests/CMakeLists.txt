@@ -1,0 +1,25 @@
+add_executable(cte_tests unit/task_executor_test.cpp concurrency/lifecycle_test.cpp concurrency/queue_test.cpp)
+target_include_directories(cte_tests PRIVATE support)
+target_link_libraries(cte_tests PRIVATE cte::cte GTest::gtest_main)
+cte_project_options(cte_tests)
+add_test(NAME executor_contract COMMAND cte_tests --gtest_death_test_style=threadsafe)
+set_tests_properties(executor_contract PROPERTIES TIMEOUT 90)
+
+# Identical macro and include settings across this library and its consumers.
+# No production executable links this variant.
+add_library(cte_testing STATIC ../src/task_executor.cpp)
+target_compile_definitions(cte_testing PUBLIC CTE_TESTING=1)
+target_include_directories(cte_testing PUBLIC ../include support)
+target_link_libraries(cte_testing PUBLIC Threads::Threads)
+cte_project_options(cte_testing)
+add_executable(cte_fault_tests concurrency/fault_test.cpp)
+target_link_libraries(cte_fault_tests PRIVATE cte_testing GTest::gtest_main)
+cte_project_options(cte_fault_tests)
+add_test(NAME executor_faults COMMAND cte_fault_tests --gtest_death_test_style=threadsafe)
+set_tests_properties(executor_faults PROPERTIES TIMEOUT 90)
+
+add_executable(cte_stress stress/executor_stress.cpp)
+target_link_libraries(cte_stress PRIVATE cte::cte)
+cte_project_options(cte_stress)
+add_test(NAME executor_stress COMMAND cte_stress --rounds 24 --tasks 4000 --seed 20260917)
+set_tests_properties(executor_stress PROPERTIES TIMEOUT 120 LABELS stress)

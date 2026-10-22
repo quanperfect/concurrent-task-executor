@@ -1,0 +1,17 @@
+/build/
+/.idea/
+/CMakeUserPresets.json
+/cmake-build-*/
+__pycache__/
+*.pyc
+*.profraw
+*.profdata
+core
+core.*
+/.venv/
+/.env
+/.env.*
+/.DS_Store
+
+# Raw per-submission lock samples are large; regenerate with benchmarks/run_all.sh
+*.locks.csv
